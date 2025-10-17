@@ -103,9 +103,11 @@ SIMPLE_JWT = {
 }
 
 # CORS Configuration
-CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 
+# Get CORS origins from environment or use defaults for development
+_cors_origins = os.environ.get('CORS_ALLOWED_ORIGINS', 
     'http://localhost:5173,http://localhost:3000,http://localhost:8080'
-).split(',')
+)
+CORS_ALLOWED_ORIGINS = [origin.strip() for origin in _cors_origins.split(',') if origin.strip()]
 
 # In production, add your Vercel domain to CORS_ALLOWED_ORIGINS environment variable
 
