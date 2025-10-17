@@ -110,15 +110,15 @@ SIMPLE_JWT = {
 }
 
 # CORS Configuration
-# Get CORS origins from environment or use defaults for development
-_cors_origins = os.environ.get('CORS_ALLOWED_ORIGINS', 
-    'http://localhost:5173,http://localhost:3000,http://localhost:8080,https://zetdc-frontend-k15nifp0m-royalcodeplagues-projects.vercel.app'
-)
-CORS_ALLOWED_ORIGINS = [origin.strip() for origin in _cors_origins.split(',') if origin.strip()]
-
-# In production, add your Vercel domain to CORS_ALLOWED_ORIGINS environment variable
-
+# TEMPORARILY allow all origins for debugging (CHANGE THIS IN PRODUCTION)
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+
+# Production origins (will use after testing)
+# _cors_origins = os.environ.get('CORS_ALLOWED_ORIGINS', 
+#     'http://localhost:5173,http://localhost:3000,http://localhost:8080,https://zetdc-frontend-k15nifp0m-royalcodeplagues-projects.vercel.app'
+# )
+# CORS_ALLOWED_ORIGINS = [origin.strip() for origin in _cors_origins.split(',') if origin.strip()]
 
 CORS_ALLOW_METHODS = [
     'DELETE',
