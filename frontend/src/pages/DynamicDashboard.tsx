@@ -336,7 +336,7 @@ const DynamicDashboard = () => {
       </div>
       
       {/* Modals */}
-      <AddMeterModal open={showAddMeterModal} onOpenChange={setShowAddMeterModal} />
+      <AddMeterModal open={showAddMeterModal} onOpenChange={setShowAddMeterModal} onSuccess={loadData} />
   <AddPaymentMethodModal open={showAddPaymentModal} onOpenChange={(open) => { setShowAddPaymentModal(open); if (!open) setInitialPaymentType(undefined); }} initialPaymentType={initialPaymentType} />
       <RechargeTokenModal open={showRechargeModal} onOpenChange={setShowRechargeModal} />
     </div>

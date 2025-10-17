@@ -6,13 +6,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Zap } from "lucide-react";
+import { metersService } from "@/services/meters";
 
 interface AddMeterModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSuccess?: () => void; // Callback to refresh meter list
 }
 
-const AddMeterModal = ({ open, onOpenChange }: AddMeterModalProps) => {
+const AddMeterModal = ({ open, onOpenChange, onSuccess }: AddMeterModalProps) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     meterNumber: "",
@@ -24,19 +26,74 @@ const AddMeterModal = ({ open, onOpenChange }: AddMeterModalProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validation
+    if (!formData.meterNumber || formData.meterNumber.length < 11) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter a valid 11-digit meter number.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!formData.nickname.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter a nickname for your meter.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setLoading(true);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      // Actually save the meter to the database
+      await metersService.createMeter({
+        meter_number: formData.meterNumber,
+        nickname: formData.nickname,
+        address: formData.location,
+        // Note: meterType is not in the backend model, so we don't send it
+      });
 
-    toast({
-      title: "Meter Added Successfully",
-      description: `${formData.nickname} has been added to your meters.`,
-    });
+      toast({
+        title: "Meter Added Successfully",
+        description: `${formData.nickname} has been added to your meters.`,
+      });
 
-    setLoading(false);
-    onOpenChange(false);
-    setFormData({ meterNumber: "", nickname: "", location: "", meterType: "" });
+      // Reset form and close modal
+      setFormData({ meterNumber: "", nickname: "", location: "", meterType: "" });
+      onOpenChange(false);
+      
+      // Trigger parent component to refresh meter list
+      if (onSuccess) {
+        onSuccess();
+      }
+    } catch (error: any) {
+      console.error('Failed to add meter:', error);
+      
+      // Handle specific error messages
+      let errorMessage = "Failed to add meter. Please try again.";
+      
+      if (error.response?.data?.meter_number) {
+        errorMessage = "This meter number already exists in your account.";
+      } else if (error.response?.data) {
+        errorMessage = typeof error.response.data === 'string' 
+          ? error.response.data 
+          : JSON.stringify(error.response.data);
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      toast({
+        title: "Error Adding Meter",
+        description: errorMessage,
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
