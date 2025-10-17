@@ -32,6 +32,7 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 # CSRF Configuration
 CSRF_TRUSTED_ORIGINS = [
     'https://zetdcplatformapp-production.up.railway.app',
+    'https://zetdc-frontend-k15nifp0m-royalcodeplagues-projects.vercel.app',
     'http://localhost:5173',
     'http://localhost:3000',
 ]
@@ -111,7 +112,7 @@ SIMPLE_JWT = {
 # CORS Configuration
 # Get CORS origins from environment or use defaults for development
 _cors_origins = os.environ.get('CORS_ALLOWED_ORIGINS', 
-    'http://localhost:5173,http://localhost:3000,http://localhost:8080'
+    'http://localhost:5173,http://localhost:3000,http://localhost:8080,https://zetdc-frontend-k15nifp0m-royalcodeplagues-projects.vercel.app'
 )
 CORS_ALLOWED_ORIGINS = [origin.strip() for origin in _cors_origins.split(',') if origin.strip()]
 
