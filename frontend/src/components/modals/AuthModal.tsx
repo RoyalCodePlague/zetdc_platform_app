@@ -75,12 +75,35 @@ const AuthModal = ({ open, onOpenChange, defaultTab = "login" }: AuthModalProps)
         if (typeof e === 'string') return e;
         if (typeof e === 'object' && e !== null) {
           const obj = e as Record<string, unknown>;
+          
+          // Handle Django validation errors (field-specific errors)
+          if (obj.phone_number) {
+            return `Phone Number: ${Array.isArray(obj.phone_number) ? obj.phone_number[0] : obj.phone_number}`;
+          }
+          if (obj.meter_number) {
+            return `Meter Number: ${Array.isArray(obj.meter_number) ? obj.meter_number[0] : obj.meter_number}`;
+          }
+          if (obj.email) {
+            return `Email: ${Array.isArray(obj.email) ? obj.email[0] : obj.email}`;
+          }
+          if (obj.password) {
+            return `Password: ${Array.isArray(obj.password) ? obj.password[0] : obj.password}`;
+          }
+          
+          // Generic error messages
           if (obj.message) return String(obj.message);
           if (obj.detail) return String(obj.detail);
-          try {
-            return JSON.stringify(obj);
-          } catch {
-            return 'An unexpected error occurred.';
+          
+          // Show all field errors
+          const errorFields = Object.keys(obj).filter(key => 
+            !['message', 'detail'].includes(key)
+          );
+          if (errorFields.length > 0) {
+            return errorFields.map(field => {
+              const value = obj[field];
+              const msg = Array.isArray(value) ? value[0] : value;
+              return `${field}: ${msg}`;
+            }).join(', ');
           }
         }
         return 'An unexpected error occurred.';
@@ -118,21 +141,23 @@ const AuthModal = ({ open, onOpenChange, defaultTab = "login" }: AuthModalProps)
                 required
               />
 
-              <Label htmlFor="phoneNumber">Phone Number</Label>
+              <Label htmlFor="phoneNumber">Phone Number (max 15 characters)</Label>
               <Input
                 id="phoneNumber"
                 placeholder="+263 77 123 4567"
                 value={formData.phoneNumber}
                 onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
+                maxLength={15}
                 required
               />
 
-              <Label htmlFor="meterNumber">Meter Number</Label>
+              <Label htmlFor="meterNumber">Meter Number (max 11 characters)</Label>
               <Input
                 id="meterNumber"
-                placeholder="123456789"
+                placeholder="12345678901"
                 value={formData.meterNumber}
                 onChange={(e) => handleInputChange("meterNumber", e.target.value)}
+                maxLength={11}
                 required
               />
             </>
@@ -148,7 +173,7 @@ const AuthModal = ({ open, onOpenChange, defaultTab = "login" }: AuthModalProps)
             required
           />
 
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">Password {activeTab === "signup" && "(min 8 characters)"}</Label>
           <div className="relative">
             <Input
               id="password"
@@ -156,6 +181,7 @@ const AuthModal = ({ open, onOpenChange, defaultTab = "login" }: AuthModalProps)
               placeholder="Enter your password"
               value={formData.password}
               onChange={(e) => handleInputChange("password", e.target.value)}
+              minLength={activeTab === "signup" ? 8 : undefined}
               required
             />
             <button
