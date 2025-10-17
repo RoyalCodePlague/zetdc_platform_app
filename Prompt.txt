@@ -1,0 +1,328 @@
+So as of now do this, add full functionality to 
+
+### 2. **My Meters**
+**Navigation Key:** `meters`  
+**Icon:** Zap ⚡
+
+#### Purpose
+Centralized management interface for all registered prepaid electricity meters.
+
+#### Features
+- **Meter Management**:
+  - View all registered meters in card format
+  - Display meter nickname, number, and address
+  - Show current balance with color-coded status (high/medium/low)
+  - Last top-up date and amount
+- **Meter Actions**:
+  - **Add New Meter**: Register additional electricity meters
+  - **Edit Meter**: Update meter details (nickname, number, address)
+  - **Top Up**: Quick access to purchase electricity for specific meter
+  - **Delete Meter**: Remove meters from account with confirmation dialog
+- **Balance Indicators**:
+  - Visual icons and colors based on remaining balance
+  - High balance (>50 kWh): Green indicator
+  - Medium balance (20-50 kWh): Yellow warning
+  - Low balance (<20 kWh): Red alert
+
+#### Use Cases
+- Manage multiple properties (home, rental, business, family members)
+- Monitor balance across all meters
+- Quick top-up for specific meters
+- Update meter information as needed
+- Remove inactive or sold property meters
+
+---
+
+### 3. **Buy Electricity**
+**Navigation Key:** `buy`  
+**Icon:** Credit Card 💳
+
+#### Purpose
+Dedicated interface for purchasing electricity tokens for registered meters.
+
+#### Features
+- **Purchase Form**:
+  - Select meter from dropdown (displays nickname and number)
+  - Enter purchase amount (minimum/maximum validation)
+  - Choose payment method (saved cards, mobile money, etc.)
+  - Apply promo codes or vouchers
+  - View transaction fees and total amount
+- **Last Token Display**:
+  - Shows most recent purchased token
+  - Token number (20-digit format)
+  - Purchase date and amount
+  - Copy-to-clipboard functionality
+- **Payment Methods**:
+  - Add new payment methods
+  - Select from saved payment options
+  - Support for credit/debit cards and mobile money
+
+#### Use Cases
+- Purchase electricity tokens remotely
+- Select specific meter for charging
+- Use saved payment methods for quick transactions
+- Apply promotional discounts
+- Retrieve recent token numbers
+
+---
+
+### 4. **Recharge Token**
+**Navigation Key:** `recharge-token`  
+**Icon:** Battery 🔋
+
+#### Purpose
+Manual token entry interface for recharging meters with tokens obtained through other channels.
+
+#### Features
+- **Token Entry**:
+  - Input 20-digit electricity token number
+  - Validate token format
+  - Submit token to meter system
+- **Recent Token Recharges**:
+  - List of recently entered tokens
+  - Token status indicators:
+    - ✅ **Success**: Token successfully applied to meter
+    - ⏳ **Pending**: Token processing in progress
+    - ❌ **Failed**: Token rejected or invalid
+    - 🚫 **Rejected**: Token already used or expired
+  - Display meter nickname associated with each token
+  - Show token amount (kWh) and entry date/time
+- **Token Management**:
+  - View masked token numbers (1234****5678****9012)
+  - Track token application history
+
+#### Use Cases
+- Enter tokens purchased through other channels (USSD, retail stores, etc.)
+- Verify token application status
+- Track manual recharge history
+- Retry failed token entries
+
+---
+
+### 5. **Transactions**
+**Navigation Key:** `transactions`  
+**Icon:** History 📜
+
+#### Purpose
+Comprehensive transaction history and financial tracking for all electricity purchases.
+
+#### Features
+- **Transaction Table**:
+  - Date and time of transaction
+  - Transaction ID (unique reference)
+  - Meter name and number
+  - Amount spent (currency)
+  - Energy units received (kWh)
+  - Payment method used
+  - Transaction status (Completed, Pending, Failed, Refunded)
+- **Filtering & Search**:
+  - Search by transaction ID, meter, or amount
+  - Filter by transaction status
+  - Filter by specific meter
+  - Date range selection
+- **Transaction Details**:
+  - View full transaction information in modal
+  - Token number display with copy function
+  - Payment details breakdown
+  - Transaction fees
+- **Export Functionality**:
+  - Export transaction history to CSV
+  - Custom date range for exports
+  - Filtered data export
+- **Refresh**:
+  - Manual refresh to fetch latest transactions
+
+#### Use Cases
+- Track all electricity purchases
+- Download statements for accounting
+- Verify transaction success
+- Retrieve token numbers from past purchases
+- Monitor spending patterns
+- Export data for tax/expense records
+
+---
+
+### 6. **Notifications**
+**Navigation Key:** `notifications`  
+**Icon:** Bell 🔔
+
+#### Purpose
+Notification center for system alerts, transaction updates, and meter status notifications.
+
+#### Features
+- **Notification List**:
+  - View all notifications (read and unread)
+  - Notification types:
+    - 💳 **Transaction**: Purchase confirmations, payment updates
+    - ⚠️ **Low Balance**: Meter balance warnings
+    - 🔄 **Auto-recharge**: Automatic recharge status
+    - ⚙️ **System**: System updates, maintenance alerts
+  - Timestamp for each notification
+  - Read/unread status indicators
+- **Notification Actions**:
+  - Mark individual notification as read/unread
+  - Delete individual notifications
+  - Clear all notifications
+  - Mark all as read
+- **Search & Filter**:
+  - Search notifications by content
+  - Filter by notification type
+  - Filter by read/unread status
+- **Notification Settings**:
+  - **Delivery Methods**:
+    - Email notifications toggle
+    - SMS/Text notifications toggle
+    - Push notifications toggle
+  - **Notification Types**:
+    - Transaction alerts (purchases, refunds)
+    - Low balance warnings
+    - Auto-recharge notifications
+    - System updates
+    - Promotional offers
+
+#### Use Cases
+- Stay informed about meter status
+- Receive transaction confirmations
+- Get low balance alerts
+- Manage notification preferences
+- Review system announcements
+- Control notification channels
+
+---
+
+### 7. **Auto Recharge**
+**Navigation Key:** `auto-recharge`  
+**Icon:** Refresh Cycle 🔄
+
+#### Purpose
+Configure automatic electricity recharge settings to prevent power outages.
+
+#### Features
+- **Auto-Recharge Configuration**:
+  - **Enable/Disable Toggle**: Turn auto-recharge on or off
+  - **Low Balance Threshold**: Set minimum balance trigger (e.g., 10 kWh)
+  - **Recharge Amount**: Define how much to recharge when triggered
+  - **Payment Method**: Select default payment method for auto-recharge
+  - **Time Restrictions**: Optional time window for auto-recharge (e.g., 9 AM - 5 PM)
+- **Meter Status Display**:
+  - List all connected meters
+  - Current balance for each meter
+  - Auto-recharge status:
+    - ✅ **Active**: Auto-recharge enabled and monitoring
+    - ⏳ **Pending**: Auto-recharge triggered, awaiting execution
+    - 🔴 **Below Threshold**: Balance is low but auto-recharge disabled
+    - ⚪ **Above Threshold**: Balance sufficient
+- **Save Settings**: Apply configuration to all meters
+
+#### Use Cases
+- Prevent unexpected power outages
+- Set custom recharge thresholds per household needs
+- Automate electricity purchases
+- Ensure continuous power for critical equipment
+- Manage elderly/remote family members' electricity
+- Business continuity (shops, offices)
+
+---
+
+### 8. **Account Settings**
+**Navigation Key:** `settings`  
+**Icon:** Settings ⚙️
+
+#### Purpose
+Comprehensive account management interface for profile, security, preferences, and privacy settings.
+
+#### Features
+
+##### **Profile Tab**
+- **Personal Information**:
+  - Full name
+  - Email address
+  - Phone number
+  - Physical address
+- **Update Profile**: Save changes to personal information
+- **Account Overview**:
+  - Account creation date
+  - Last login timestamp
+  - Total meters registered
+  - Account verification status
+
+##### **Security Tab**
+- **Password Management**:
+  - Current password verification
+  - New password (with confirmation)
+  - Password strength indicator
+- **Two-Factor Authentication (2FA)**:
+  - Enable/disable 2FA toggle
+  - Setup instructions when enabling
+  - Backup codes generation
+- **Connected Devices**:
+  - View active login sessions
+  - Device type and location
+  - Last active timestamp
+  - Logout from specific device
+  - Logout from all devices except current
+
+##### **Preferences Tab**
+- **Display Settings**:
+  - Theme selection (Light/Dark/System)
+  - Language preference
+  - Date format
+  - Currency display
+- **Regional Settings**:
+  - Timezone configuration
+  - Number format preference
+- **Email Preferences**:
+  - Transaction receipts
+  - Monthly statements
+  - Marketing communications
+  - Product updates
+
+##### **Privacy Tab**
+- **Data Management**:
+  - Download account data (GDPR compliance)
+  - View data usage policy
+  - Request data deletion
+- **Account Actions**:
+  - Temporarily deactivate account
+  - Permanently delete account (with confirmation)
+- **Privacy Controls**:
+  - Transaction history visibility
+  - Profile visibility settings
+  - Data sharing preferences
+
+#### Use Cases
+- Update contact information
+- Enhance account security with 2FA
+- Manage active sessions
+- Configure regional preferences
+- Control email notifications
+- Download personal data
+- Delete or deactivate account
+
+## Additional Components
+
+### **Modals**
+
+#### Add Meter Modal
+- Input fields: Meter Nickname, Meter Number, Address
+- Validation for meter number format
+- Save and cancel options
+
+#### Add Payment Method Modal
+- Payment type selection (Card, Mobile Money)
+- Card/account details input
+- Set as default payment option
+- Security verification
+
+#### Recharge Token Modal
+- 20-digit token input with formatting
+- Meter selection
+- Token validation
+- Immediate submission to meter system
+
+#### Authentication Modal
+- Login/Register tabs
+- Email and password input
+- "Remember me" option
+- Password reset link
+- Social login options (future)
