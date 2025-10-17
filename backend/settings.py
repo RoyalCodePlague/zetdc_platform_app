@@ -33,6 +33,7 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 CSRF_TRUSTED_ORIGINS = [
     'https://zetdcplatformapp-production.up.railway.app',
     'https://zetdc-frontend-k15nifp0m-royalcodeplagues-projects.vercel.app',
+    'https://zetdc-frontend-itnkm4jh7-royalcodeplagues-projects.vercel.app',
     'http://localhost:5173',
     'http://localhost:3000',
 ]
