@@ -1,4 +1,5 @@
 import { Zap, Facebook, Twitter, Instagram, Mail, Phone, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const scrollToSection = (sectionId: string) => {
@@ -98,52 +99,36 @@ const Footer = () => {
             <h3 className="font-semibold mb-4">Legal</h3>
             <ul className="space-y-2">
               <li>
-                <a 
-                  href="/terms" 
+                <Link 
+                  to="/terms" 
                   className="text-white/80 hover:text-white transition-colors text-sm"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    alert('Terms of Service page coming soon');
-                  }}
                 >
                   Terms of Service
-                </a>
+                </Link>
               </li>
               <li>
-                <a 
-                  href="/privacy" 
+                <Link 
+                  to="/privacy" 
                   className="text-white/80 hover:text-white transition-colors text-sm"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    alert('Privacy Policy page coming soon');
-                  }}
                 >
                   Privacy Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a 
-                  href="/cookies" 
+                <Link 
+                  to="/cookies" 
                   className="text-white/80 hover:text-white transition-colors text-sm"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    alert('Cookie Policy page coming soon');
-                  }}
                 >
                   Cookie Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a 
-                  href="/refund" 
+                <Link 
+                  to="/refund" 
                   className="text-white/80 hover:text-white transition-colors text-sm"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    alert('Refund Policy page coming soon');
-                  }}
                 >
                   Refund Policy
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

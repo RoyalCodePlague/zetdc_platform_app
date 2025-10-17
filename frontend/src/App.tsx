@@ -8,6 +8,10 @@ import { AuthProvider } from "@/context/AuthContext";
 import Landing from "./pages/Landing";
 import DynamicDashboard from "./pages/DynamicDashboard";
 import NotFound from "./pages/NotFound";
+import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import CookiePolicy from "./pages/CookiePolicy";
+import RefundPolicy from "./pages/RefundPolicy";
 import ProtectedRoute from "@/components/ProtectedRoute"; // ✅ import ProtectedRoute
 
 const queryClient = new QueryClient();
@@ -23,6 +27,12 @@ const App = () => (
           <Routes>
             {/* Public landing page */}
             <Route path="/" element={<Landing />} />
+
+            {/* Legal pages */}
+            <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/cookies" element={<CookiePolicy />} />
+            <Route path="/refund" element={<RefundPolicy />} />
 
             {/* Protected dashboard */}
             <Route
