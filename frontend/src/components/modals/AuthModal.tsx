@@ -132,69 +132,79 @@ const AuthModal = ({ open, onOpenChange, defaultTab = "login" }: AuthModalProps)
         <form className="space-y-4" onSubmit={handleSubmit}>
           {activeTab === "signup" && (
             <>
-              <Label htmlFor="fullName">Full Name</Label>
-              <Input
-                id="fullName"
-                placeholder="John Doe"
-                value={formData.fullName}
-                onChange={(e) => handleInputChange("fullName", e.target.value)}
-                required
-              />
+              <div className="space-y-1.5">
+                <Label htmlFor="fullName">Full Name</Label>
+                <Input
+                  id="fullName"
+                  placeholder="John Doe"
+                  value={formData.fullName}
+                  onChange={(e) => handleInputChange("fullName", e.target.value)}
+                  required
+                />
+              </div>
 
-              <Label htmlFor="phoneNumber">Phone Number (max 15 characters)</Label>
-              <Input
-                id="phoneNumber"
-                placeholder="+263 77 123 4567"
-                value={formData.phoneNumber}
-                onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
-                maxLength={15}
-                required
-              />
+              <div className="space-y-1.5">
+                <Label htmlFor="phoneNumber">Phone Number (max 15 characters)</Label>
+                <Input
+                  id="phoneNumber"
+                  placeholder="+263 77 123 4567"
+                  value={formData.phoneNumber}
+                  onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
+                  maxLength={15}
+                  required
+                />
+              </div>
 
-              <Label htmlFor="meterNumber">Meter Number (max 11 characters)</Label>
-              <Input
-                id="meterNumber"
-                placeholder="12345678901"
-                value={formData.meterNumber}
-                onChange={(e) => handleInputChange("meterNumber", e.target.value)}
-                maxLength={11}
-                required
-              />
+              <div className="space-y-1.5">
+                <Label htmlFor="meterNumber">Meter Number (max 11 characters)</Label>
+                <Input
+                  id="meterNumber"
+                  placeholder="12345678901"
+                  value={formData.meterNumber}
+                  onChange={(e) => handleInputChange("meterNumber", e.target.value)}
+                  maxLength={11}
+                  required
+                />
+              </div>
             </>
           )}
 
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="example@email.com"
-            value={formData.email}
-            onChange={(e) => handleInputChange("email", e.target.value)}
-            required
-          />
-
-          <Label htmlFor="password">Password {activeTab === "signup" && "(min 8 characters)"}</Label>
-          <div className="relative">
+          <div className="space-y-1.5">
+            <Label htmlFor="email">Email</Label>
             <Input
-              id="password"
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={(e) => handleInputChange("password", e.target.value)}
-              minLength={activeTab === "signup" ? 8 : undefined}
+              id="email"
+              type="email"
+              placeholder="example@email.com"
+              value={formData.email}
+              onChange={(e) => handleInputChange("email", e.target.value)}
               required
             />
-            <button
-              type="button"
-              className="absolute right-2 top-1/2 -translate-y-1/2"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="password">Password {activeTab === "signup" && "(min 8 characters)"}</Label>
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                value={formData.password}
+                onChange={(e) => handleInputChange("password", e.target.value)}
+                minLength={activeTab === "signup" ? 8 : undefined}
+                required
+              />
+              <button
+                type="button"
+                className="absolute right-2 top-1/2 -translate-y-1/2"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
           {activeTab === "signup" && (
-            <>
+            <div className="space-y-1.5">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
               <Input
                 id="confirmPassword"
@@ -204,7 +214,7 @@ const AuthModal = ({ open, onOpenChange, defaultTab = "login" }: AuthModalProps)
                 onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
                 required
               />
-            </>
+            </div>
           )}
 
           <Button type="submit" className="w-full mt-2">
