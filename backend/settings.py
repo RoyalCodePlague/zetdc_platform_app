@@ -29,6 +29,12 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
+# CSRF Configuration
+CSRF_TRUSTED_ORIGINS = [
+    'https://zetdcplatformapp-production.up.railway.app',
+    'http://localhost:5173',
+    'http://localhost:3000',
+]
 
 # Application definition
 
