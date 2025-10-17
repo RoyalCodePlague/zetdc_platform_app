@@ -27,13 +27,6 @@ const BuyElectricityForm = ({ onAddPaymentMethod, onSuccess }: BuyElectricityFor
   const [fee, setFee] = useState<number>(0);
   const { toast } = useToast();
 
-  const savedMeters: LocalMeter[] = [
-    // fallback/sample meters - real ones loaded from API below
-    { id: 1, nickname: "Home - Main House", meter_number: "12345678901234567890" },
-    { id: 2, nickname: "Shop - Eastgate Mall", meter_number: "09876543210987654321" },
-    { id: 3, nickname: "Mom's House", meter_number: "11111111111111111111" },
-  ];
-
   const paymentMethods = [
     { id: "card", name: "Credit/Debit Card", icon: CreditCard },
     { id: "mobile", name: "Mobile Money", icon: Smartphone },
@@ -161,15 +154,20 @@ const BuyElectricityForm = ({ onAddPaymentMethod, onSuccess }: BuyElectricityFor
                   <SelectValue placeholder="Choose a saved meter" />
                 </SelectTrigger>
               <SelectContent>
-                { (metersList.length ? metersList : savedMeters).map((meter) => (
+                {metersList.length === 0 ? (
+                  <SelectItem value="none" disabled>
+                    No meters found. Add a meter first.
+                  </SelectItem>
+                ) : (
+                  metersList.map((meter) => (
                   <SelectItem key={String(meter.id)} value={String(meter.id)}>
                     <div>
                       <div className="font-medium">{(meter as LocalMeter).nickname || (meter as LocalMeter).name || `Meter ${meter.id}`}</div>
                         {/* Showing human-friendly meter name only (hide long meter number) */}
                     </div>
                   </SelectItem>
-                ))}
-                <SelectItem value="new">Add New Meter</SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -215,20 +213,12 @@ const BuyElectricityForm = ({ onAddPaymentMethod, onSuccess }: BuyElectricityFor
                   type="button"
                   variant={paymentMethod === method.id ? "default" : "outline"}
                   className="h-auto p-3 md:p-4 flex items-center justify-start space-x-3 text-left"
-                  onClick={() => {
-                    setPaymentMethod(method.id);
-                    // open AddPaymentMethodModal with the selected payment type if handler provided
-                    if (onAddPaymentMethod) onAddPaymentMethod(method.id);
-                  }}
+                  onClick={() => setPaymentMethod(method.id)}
                 >
                   <method.icon className="h-5 w-5 flex-shrink-0" />
                   <span className="text-sm font-medium">{method.name}</span>
                 </Button>
               ))}
-              <Button variant="outline" className="w-full" onClick={() => onAddPaymentMethod?.()}>
-                <CreditCard className="h-4 w-4 mr-2" />
-                Add Payment Method
-              </Button>
             </div>
             {!paymentMethod && (
               <p className="text-sm text-destructive">Please select a payment method</p>

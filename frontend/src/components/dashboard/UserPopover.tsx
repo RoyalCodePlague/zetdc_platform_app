@@ -8,12 +8,25 @@ import { useAuth } from "@/context/AuthContext";
 
 const UserPopover = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, logout, loading } = useAuth();
+  
+  // Show loading or return early if no user
+  if (loading || !user) {
+    return (
+      <Button variant="ghost" className="h-auto p-2" disabled>
+        <Avatar className="h-8 w-8">
+          <AvatarFallback className="bg-gradient-primary text-white">
+            ?
+          </AvatarFallback>
+        </Avatar>
+      </Button>
+    );
+  }
   
   const displayUser = {
-    name: user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.username || user.email.split('@')[0] : "User",
-    email: user?.email || "user@example.com",
-    avatar: user?.profile_picture || "",
+    name: `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.username || user.email.split('@')[0],
+    email: user.email,
+    avatar: user.profile_picture || "",
     plan: "Premium",
     joinDate: "Member since Jan 2024"
   };
