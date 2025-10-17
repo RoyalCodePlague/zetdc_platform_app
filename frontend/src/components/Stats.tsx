@@ -30,7 +30,7 @@ const Stats = () => {
   ];
 
   return (
-    <section className="py-20 bg-gradient-hero relative overflow-hidden">
+    <section id="stats" className="py-20 bg-gradient-hero relative overflow-hidden">
       <div className="absolute inset-0 bg-black/10"></div>
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">

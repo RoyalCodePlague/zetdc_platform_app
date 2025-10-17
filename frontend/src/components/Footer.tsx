@@ -1,6 +1,13 @@
 import { Zap, Facebook, Twitter, Instagram, Mail, Phone, MapPin } from "lucide-react";
 
 const Footer = () => {
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <footer className="bg-primary text-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -17,13 +24,31 @@ const Footer = () => {
               Empowering Zimbabwe&apos;s energy future with secure, convenient prepaid electricity top-ups from anywhere in the world.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
+              <a 
+                href="https://facebook.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
+                aria-label="Facebook"
+              >
                 <Facebook className="h-4 w-4" />
               </a>
-              <a href="#" className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
+              <a 
+                href="https://twitter.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
+                aria-label="Twitter"
+              >
                 <Twitter className="h-4 w-4" />
               </a>
-              <a href="#" className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
+              <a 
+                href="https://instagram.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
+                aria-label="Instagram"
+              >
                 <Instagram className="h-4 w-4" />
               </a>
             </div>
@@ -33,11 +58,38 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
-              <li><a href="#features" className="text-white/80 hover:text-white transition-colors text-sm">Features</a></li>
-              <li><a href="#how-it-works" className="text-white/80 hover:text-white transition-colors text-sm">How It Works</a></li>
-              <li><a href="#" className="text-white/80 hover:text-white transition-colors text-sm">Pricing</a></li>
-              <li><a href="#" className="text-white/80 hover:text-white transition-colors text-sm">FAQ</a></li>
-              <li><a href="#" className="text-white/80 hover:text-white transition-colors text-sm">Support</a></li>
+              <li>
+                <button 
+                  onClick={() => scrollToSection('features')} 
+                  className="text-white/80 hover:text-white transition-colors text-sm text-left"
+                >
+                  Features
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => scrollToSection('how-it-works')} 
+                  className="text-white/80 hover:text-white transition-colors text-sm text-left"
+                >
+                  How It Works
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => scrollToSection('stats')} 
+                  className="text-white/80 hover:text-white transition-colors text-sm text-left"
+                >
+                  About Us
+                </button>
+              </li>
+              <li>
+                <a 
+                  href="mailto:support@zetdc-remote.com" 
+                  className="text-white/80 hover:text-white transition-colors text-sm"
+                >
+                  Support
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -45,10 +97,54 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4">Legal</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-white/80 hover:text-white transition-colors text-sm">Terms of Service</a></li>
-              <li><a href="#" className="text-white/80 hover:text-white transition-colors text-sm">Privacy Policy</a></li>
-              <li><a href="#" className="text-white/80 hover:text-white transition-colors text-sm">Cookie Policy</a></li>
-              <li><a href="#" className="text-white/80 hover:text-white transition-colors text-sm">Refund Policy</a></li>
+              <li>
+                <a 
+                  href="/terms" 
+                  className="text-white/80 hover:text-white transition-colors text-sm"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    alert('Terms of Service page coming soon');
+                  }}
+                >
+                  Terms of Service
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="/privacy" 
+                  className="text-white/80 hover:text-white transition-colors text-sm"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    alert('Privacy Policy page coming soon');
+                  }}
+                >
+                  Privacy Policy
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="/cookies" 
+                  className="text-white/80 hover:text-white transition-colors text-sm"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    alert('Cookie Policy page coming soon');
+                  }}
+                >
+                  Cookie Policy
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="/refund" 
+                  className="text-white/80 hover:text-white transition-colors text-sm"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    alert('Refund Policy page coming soon');
+                  }}
+                >
+                  Refund Policy
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -57,27 +153,34 @@ const Footer = () => {
             <h3 className="font-semibold mb-4">Contact Us</h3>
             <ul className="space-y-3">
               <li className="flex items-center space-x-2 text-sm text-white/80">
-                <Mail className="h-4 w-4" />
-                <span>support@zetdc-remote.com</span>
+                <Mail className="h-4 w-4 flex-shrink-0" />
+                <a 
+                  href="mailto:support@zetdc-remote.com" 
+                  className="hover:text-white transition-colors"
+                >
+                  support@zetdc-remote.com
+                </a>
               </li>
               <li className="flex items-center space-x-2 text-sm text-white/80">
-                <Phone className="h-4 w-4" />
-                <span>+263 242 758 631</span>
+                <Phone className="h-4 w-4 flex-shrink-0" />
+                <a 
+                  href="tel:+263242758631" 
+                  className="hover:text-white transition-colors"
+                >
+                  +263 242 758 631
+                </a>
               </li>
               <li className="flex items-center space-x-2 text-sm text-white/80">
-                <MapPin className="h-4 w-4" />
+                <MapPin className="h-4 w-4 flex-shrink-0" />
                 <span>Harare, Zimbabwe</span>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-white/20 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-white/80 text-sm">
+        <div className="border-t border-white/20 mt-8 pt-8">
+          <p className="text-white/80 text-sm text-center">
             © 2024 ZETDC Remote Prepaid Recharge Platform. All rights reserved.
-          </p>
-          <p className="text-white/80 text-sm mt-4 md:mt-0">
-            Made with ❤️ for Zimbabwe&apos;s future
           </p>
         </div>
       </div>

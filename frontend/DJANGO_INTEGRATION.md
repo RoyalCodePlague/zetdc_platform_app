@@ -996,7 +996,7 @@ Update `.env.production`:
 VITE_API_URL=https://your-backend-domain.com/api
 ```
 
-The frontend is already configured for deployment on Lovable's platform.
+The frontend can be deployed using any static hosting service (Netlify, Vercel, GitHub Pages, etc.).
 
 ---
 
