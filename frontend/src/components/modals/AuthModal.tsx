@@ -144,10 +144,10 @@ const AuthModal = ({ open, onOpenChange, defaultTab = "login" }: AuthModalProps)
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="phoneNumber">Phone Number (max 15 characters)</Label>
+                <Label htmlFor="phoneNumber">Phone Number (+263776950947 or 0776950947)</Label>
                 <Input
                   id="phoneNumber"
-                  placeholder="+263 77 123 4567"
+                  placeholder="+263776950947 or 0776950947"
                   value={formData.phoneNumber}
                   onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
                   maxLength={15}
@@ -156,13 +156,13 @@ const AuthModal = ({ open, onOpenChange, defaultTab = "login" }: AuthModalProps)
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="meterNumber">Meter Number (max 11 characters)</Label>
+                <Label htmlFor="meterNumber">Meter Number (max 15 characters)</Label>
                 <Input
                   id="meterNumber"
-                  placeholder="12345678901"
+                  placeholder="123456789012345"
                   value={formData.meterNumber}
                   onChange={(e) => handleInputChange("meterNumber", e.target.value)}
-                  maxLength={11}
+                  maxLength={15}
                   required
                 />
               </div>

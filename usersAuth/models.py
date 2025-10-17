@@ -4,7 +4,7 @@ from django.db import models
 class User(AbstractUser):
     email = models.EmailField('email address', unique=True,)    
     phone_number = models.CharField(max_length=15, blank=True)
-    meter_number = models.CharField(max_length=11, blank=True, null=True, unique=True)
+    meter_number = models.CharField(max_length=15, blank=True, null=True, unique=True)
     profile_picture = models.ImageField(upload_to='profiles/', null=True, blank=True)
     two_factor_enabled = models.BooleanField(default=False)
     preferred_language = models.CharField(max_length=10, default='en')
