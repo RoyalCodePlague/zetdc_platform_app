@@ -105,7 +105,7 @@ const BuyElectricityForm = ({ onAddPaymentMethod, onSuccess }: BuyElectricityFor
 
           const poll = async () => {
             let attempts = 0;
-            while (attempts < 30) {
+            while (attempts < 60) {
               attempts += 1;
               try {
                 const txRes = await transactionsService.getTransactions({ transaction_id: res.transaction_id });
@@ -226,7 +226,12 @@ const BuyElectricityForm = ({ onAddPaymentMethod, onSuccess }: BuyElectricityFor
                   type="button"
                   variant={paymentMethod === method.id ? "default" : "outline"}
                   className="h-auto p-3 md:p-4 flex items-center justify-start space-x-3 text-left"
-                  onClick={() => setPaymentMethod(method.id)}
+                  onClick={() => {
+                    setPaymentMethod(method.id);
+                    if (onAddPaymentMethod) {
+                      onAddPaymentMethod(method.id);
+                    }
+                  }}
                 >
                   <method.icon className="h-5 w-5 flex-shrink-0" />
                   <span className="text-sm font-medium">{method.name}</span>
