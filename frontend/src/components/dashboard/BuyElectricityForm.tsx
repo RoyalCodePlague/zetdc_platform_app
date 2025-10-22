@@ -99,7 +99,7 @@ const BuyElectricityForm = ({ onAddPaymentMethod, onSuccess }: BuyElectricityFor
     // Call backend purchase endpoint and poll via transactionsService
     (async () => {
       try {
-        const res = await metersService.purchaseElectricity(selectedMeter, parseFloat(amount));
+        const res = await metersService.purchaseElectricity(selectedMeter, parseFloat(amount), paymentMethod);
         if (res.status === 'pending') {
           toast({ title: 'Payment Pending', description: 'Waiting for confirmation...' });
 
@@ -205,7 +205,20 @@ const BuyElectricityForm = ({ onAddPaymentMethod, onSuccess }: BuyElectricityFor
 
           {/* Payment Method */}
           <div className="space-y-2">
-            <Label>Payment Method *</Label>
+            <div className="flex items-center justify-between">
+              <Label>Payment Method *</Label>
+              {onAddPaymentMethod && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onAddPaymentMethod()}
+                  className="text-xs h-auto p-1"
+                >
+                  + Add Payment Method
+                </Button>
+              )}
+            </div>
             <div className="grid grid-cols-1 gap-3">
               {paymentMethods.map((method) => (
                 <Button

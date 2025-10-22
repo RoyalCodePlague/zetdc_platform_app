@@ -27,9 +27,10 @@ export const metersService = {
     return response.data;
   },
 
-  async purchaseElectricity(meterId: string, amount: number) {
+  async purchaseElectricity(meterId: string, amount: number, paymentMethod?: string) {
     const response = await api.post(`/meters/${meterId}/purchase_electricity/`, {
       amount,
+      payment_method: paymentMethod || 'dev',
     });
     return response.data;
   },
