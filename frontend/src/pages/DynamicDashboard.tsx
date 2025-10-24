@@ -118,12 +118,12 @@ const DynamicDashboard = () => {
       await loadData();
     })();
 
-    // Auto-refresh data every 30 seconds
+    // Auto-refresh data every 10 seconds for better responsiveness
     const interval = setInterval(() => {
       if (isMounted) {
         loadData();
       }
-    }, 30000);
+    }, 10000);
 
     return () => {
       mounted = false;
@@ -263,7 +263,7 @@ const DynamicDashboard = () => {
           <BuyElectricityForm onAddPaymentMethod={(type?: string) => { setInitialPaymentType(type); setShowAddPaymentModal(true); }} onSuccess={loadData} />
         </div>
         <div>
-          <LastTokenCard lastToken={transactions[0]} loading={loadingData} meters={meters} />
+          <LastTokenCard lastToken={transactions[0]} loading={loadingData} meters={meters} onRefresh={loadData} />
         </div>
       </div>
     </>

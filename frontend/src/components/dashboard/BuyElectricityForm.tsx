@@ -69,7 +69,8 @@ const BuyElectricityForm = ({ onAddPaymentMethod, onSuccess }: BuyElectricityFor
           console.debug('failed to refresh meters', e);
         }
       };
-      refreshMeters();
+      // Add a small delay to ensure the backend has processed the new meter
+      setTimeout(refreshMeters, 500);
     }
   }, [onSuccess]);
 

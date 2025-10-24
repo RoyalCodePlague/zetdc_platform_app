@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Copy, Mail, MessageCircle, Smartphone } from "lucide-react";
+import { Copy, Mail, MessageCircle, Smartphone, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 import { Transaction, Meter as MeterType } from "@/types/models";
@@ -14,21 +14,27 @@ type LastToken = {
   meter?: string;
 };
 
-const LastTokenCard: React.FC<{ lastToken?: LastToken | Transaction | null; loading?: boolean; meters?: MeterType[] }> = ({ lastToken = null, loading = false, meters = [] }) => {
+const LastTokenCard: React.FC<{ lastToken?: LastToken | Transaction | null; loading?: boolean; meters?: MeterType[]; onRefresh?: () => void }> = ({ lastToken = null, loading = false, meters = [], onRefresh }) => {
   const { toast } = useToast();
 
   const isTransaction = (obj: unknown): obj is Transaction => !!obj && typeof obj === 'object' && ('transaction_id' in (obj as object));
   const getToken = (obj?: LastToken | Transaction | null): string | undefined => {
     if (!obj) return undefined;
     if (isTransaction(obj)) {
-      // token may be on the transaction or encoded in the description
+      // Check for token_code field first (most reliable)
+      if ((obj as any).token_code) return String((obj as any).token_code);
+      // token may be on the transaction
       if (obj.token) return String(obj.token);
+      // Check if token is encoded in the description
       if (obj.description && String(obj.description).includes('Allocated token')) {
         const parts = String(obj.description).split('Allocated token ');
-        return parts[1] ? parts[1].trim() : undefined;
+        if (parts.length > 1) {
+          const tokenPart = parts[1].trim();
+          // Extract just the token part (remove any extra text)
+          const tokenMatch = tokenPart.match(/^[0-9]{20}/);
+          if (tokenMatch) return tokenMatch[0];
+        }
       }
-      // Check for token_code field
-      if ((obj as any).token_code) return String((obj as any).token_code);
       return undefined;
     }
     // LastToken shape
@@ -182,7 +188,19 @@ const LastTokenCard: React.FC<{ lastToken?: LastToken | Transaction | null; load
   return (
     <Card className="bg-gradient-card shadow-medium">
       <CardHeader>
-        <CardTitle className="text-lg">Last Token Purchase</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg">Last Token Purchase</CardTitle>
+          {onRefresh && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onRefresh}
+              className="h-8 w-8 p-0"
+            >
+              <RefreshCw className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </CardHeader>
       
       <CardContent className="space-y-4">
