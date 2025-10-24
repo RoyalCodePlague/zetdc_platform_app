@@ -279,7 +279,7 @@ const DynamicDashboard = () => {
                 <BuyElectricityForm onAddPaymentMethod={(type?: string) => { setInitialPaymentType(type); setShowAddPaymentModal(true); }} onSuccess={loadData} />
               </div>
               <div>
-                <LastTokenCard meters={meters} />
+                <LastTokenCard lastToken={transactions[0]} loading={loadingData} meters={meters} />
               </div>
             </div>
           </div>

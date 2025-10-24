@@ -8,7 +8,6 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--apply', action='store_true', help='Apply changes to the database')
         parser.add_argument('--treat-zero-as-missing', action='store_true', help='Treat 0.00 units on Token/TokenPurchase as missing and overwrite')
-        parser.add_argument('--create-manuals', action='store_true', help='Create ManualRecharge audit entries for existing Token/TokenPurchase rows that lack them')
 
     def handle(self, *args, **options):
         apply_changes = options['apply']
@@ -69,18 +68,6 @@ class Command(BaseCommand):
                 self.stdout.write(f'Token id={t.id} code={t.token_code} will get units={units} amount={amount}')
             for p, units, amount in purchase_updates[:10]:
                 self.stdout.write(f'Purchase id={p.id} code={p.token_code} will get units={units} amount={amount}')
-            # show manual recharge creation candidates
-            if options.get('create_manuals'):
-                from meters.models import ManualRecharge
-                token_manual_candidates = []
-                purchase_manual_candidates = []
-                for tok in Token.objects.all():
-                    if not ManualRecharge.objects.filter(token_code=tok.token_code, status='success').exists():
-                        token_manual_candidates.append(tok)
-                for pur in TokenPurchase.objects.all():
-                    if not ManualRecharge.objects.filter(token_code=pur.token_code, status='success').exists():
-                        purchase_manual_candidates.append(pur)
-                self.stdout.write(f'Would create {len(token_manual_candidates)} ManualRecharge entries from Token, and {len(purchase_manual_candidates)} from TokenPurchase')
             return
 
         # Apply changes within a transaction
@@ -95,42 +82,5 @@ class Command(BaseCommand):
                 if amount is not None:
                     p.units = units
                 p.save(update_fields=['units'])
-
-            # optionally create ManualRecharge audit records for existing tokens/purchases
-            if options.get('create_manuals'):
-                from meters.models import ManualRecharge
-                from django.utils import timezone
-                created_manuals = 0
-                for tok in Token.objects.all():
-                    if not ManualRecharge.objects.filter(token_code=tok.token_code, status='success').exists():
-                        try:
-                            ManualRecharge.objects.create(
-                                token_code=tok.token_code,
-                                meter=tok.meter,
-                                user=(tok.meter.user if tok.meter and hasattr(tok.meter, 'user') else None),
-                                units=tok.units,
-                                status='success',
-                                applied_at=(tok.used_at or tok.created_at or timezone.now()),
-                                message='Backfilled from Token'
-                            )
-                            created_manuals += 1
-                        except Exception:
-                            pass
-                for pur in TokenPurchase.objects.all():
-                    if not ManualRecharge.objects.filter(token_code=pur.token_code, status='success').exists():
-                        try:
-                            ManualRecharge.objects.create(
-                                token_code=pur.token_code,
-                                meter=pur.meter,
-                                user=(pur.user if hasattr(pur, 'user') else None),
-                                units=pur.units,
-                                status='success',
-                                applied_at=(pur.purchased_at or timezone.now()),
-                                message='Backfilled from TokenPurchase'
-                            )
-                            created_manuals += 1
-                        except Exception:
-                            pass
-                self.stdout.write(self.style.SUCCESS(f'Created {created_manuals} ManualRecharge audit records'))
 
         self.stdout.write(self.style.SUCCESS(f'Applied changes: {len(token_updates)} Token rows, {len(purchase_updates)} Purchase rows'))
