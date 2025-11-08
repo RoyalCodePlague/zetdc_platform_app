@@ -118,9 +118,17 @@ const DynamicDashboard = () => {
       await loadData();
     })();
 
+    // Auto-refresh data every 10 seconds for better responsiveness
+    const interval = setInterval(() => {
+      if (isMounted) {
+        loadData();
+      }
+    }, 10000);
+
     return () => {
       mounted = false;
       isMounted = false;
+      clearInterval(interval);
     };
   }, []);
 
@@ -255,7 +263,7 @@ const DynamicDashboard = () => {
           <BuyElectricityForm onAddPaymentMethod={(type?: string) => { setInitialPaymentType(type); setShowAddPaymentModal(true); }} onSuccess={loadData} />
         </div>
         <div>
-          <LastTokenCard lastToken={transactions[0]} loading={loadingData} meters={meters} />
+          <LastTokenCard lastToken={transactions[0]} loading={loadingData} meters={meters} onRefresh={loadData} />
         </div>
       </div>
     </>
@@ -265,25 +273,6 @@ const DynamicDashboard = () => {
     switch (activeTab) {
       case "meters":
         return <MyMeters />;
-      case "buy":
-        return (
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <div>
-                <h2 className="text-2xl font-bold text-foreground">Buy Electricity</h2>
-                <p className="text-muted-foreground">Purchase electricity tokens for your meters</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
-                <BuyElectricityForm onAddPaymentMethod={(type?: string) => { setInitialPaymentType(type); setShowAddPaymentModal(true); }} onSuccess={loadData} />
-              </div>
-              <div>
-                <LastTokenCard lastToken={transactions[0]} loading={loadingData} meters={meters} />
-              </div>
-            </div>
-          </div>
-        );
       case "transactions":
         return <Transactions />;
       case "notifications":

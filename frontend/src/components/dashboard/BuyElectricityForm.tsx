@@ -56,6 +56,24 @@ const BuyElectricityForm = ({ onAddPaymentMethod, onSuccess }: BuyElectricityFor
     return () => { mounted = false; };
   }, []);
 
+  // Refresh meters when onSuccess callback is triggered
+  useEffect(() => {
+    if (onSuccess) {
+      const refreshMeters = async () => {
+        try {
+          const res = await metersService.getMeters({ page_size: 100 });
+          const list = Array.isArray(res) ? res : ((res as Paginated<LocalMeter>).results || []);
+          const typed = (list as unknown) as LocalMeter[];
+          setMetersList(typed);
+        } catch (e) {
+          console.debug('failed to refresh meters', e);
+        }
+      };
+      // Add a small delay to ensure the backend has processed the new meter
+      setTimeout(refreshMeters, 500);
+    }
+  }, [onSuccess]);
+
   useEffect(() => {
     // simple fee calc: 1.5% + $0.30
     const amt = parseFloat(amount) || 0;

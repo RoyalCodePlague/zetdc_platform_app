@@ -31,7 +31,6 @@ const DashboardSidebar = ({ activeTab = "dashboard", onTabChange }: DashboardSid
   const navigation = [
     { name: "Dashboard", key: "dashboard", icon: Home },
     { name: "My Meters", key: "meters", icon: Zap },
-    { name: "Buy Electricity", key: "buy", icon: CreditCard },
     { name: "Recharge Token", key: "recharge-token", icon: Battery },
     { name: "Transactions", key: "transactions", icon: History },
     { name: "Notifications", key: "notifications", icon: Bell },

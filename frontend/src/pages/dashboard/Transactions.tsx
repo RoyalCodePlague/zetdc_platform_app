@@ -154,7 +154,7 @@ const Transactions = () => {
           units: tx.kwh ? `${tx.kwh} kWh` : (tx.units ? `${tx.units} kWh` : ''),
           status: tx.status || '',
           token: (tx.description && String(tx.description).includes('Allocated token')) ? (String(tx.description).split('Allocated token ')[1] || 'N/A') : (tx.token || 'N/A'),
-          paymentMethod: tx.payment_method || '',
+          paymentMethod: tx.payment_method === 'dev' ? 'Bank Transfer' : (tx.payment_method || 'Bank Transfer'),
           reference: tx.transaction_id || String(tx.id || '')
         } as TransactionRow;
       });

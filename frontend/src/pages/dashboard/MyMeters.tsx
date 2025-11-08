@@ -144,7 +144,7 @@ const MyMeters = () => {
     setTopUpProcessing(true);
     toast({ title: 'Processing', description: 'Initiating top-up...' });
     try {
-      const res = await metersService.purchaseElectricity(String((topUpMeter as Meter).id), amt);
+      const res = await metersService.purchaseElectricity(String((topUpMeter as Meter).id), amt, topUpPaymentMethod);
       if (res.status === 'pending' && res.transaction_id) {
         // poll transaction
         let attempts = 0;
