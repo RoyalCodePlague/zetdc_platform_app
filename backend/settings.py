@@ -94,7 +94,7 @@ MIDDLEWARE = [
 # REST Framework Configuration
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'backend.permissions.OptionalJWTAuthentication',  # Custom JWT that allows OPTIONS
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'backend.permissions.AllowOptionsAuthentication',  # Allow OPTIONS for CORS preflight

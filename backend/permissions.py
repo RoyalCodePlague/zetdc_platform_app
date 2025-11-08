@@ -1,7 +1,23 @@
 """
-Custom permission classes for handling CORS preflight requests
+Custom permission and authentication classes for handling CORS preflight requests
 """
 from rest_framework import permissions
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
+
+class OptionalJWTAuthentication(JWTAuthentication):
+    """
+    JWT authentication that doesn't fail on OPTIONS requests.
+    This allows CORS preflight requests to pass through.
+    """
+    
+    def authenticate(self, request):
+        # Skip authentication for OPTIONS requests (CORS preflight)
+        if request.method == 'OPTIONS':
+            return None
+        
+        # For all other requests, use standard JWT authentication
+        return super().authenticate(request)
 
 
 class AllowOptionsAuthentication(permissions.BasePermission):
