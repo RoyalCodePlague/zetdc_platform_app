@@ -7,14 +7,21 @@ import AuthModal from "@/components/modals/AuthModal";
 const Hero = () => {
   const [authModal, setAuthModal] = useState({ open: false, tab: "signup" as "login" | "signup" });
 
+  const scrollToFeatures = () => {
+    const featuresSection = document.getElementById('features');
+    if (featuresSection) {
+      featuresSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <section className="bg-gradient-hero py-20 lg:py-32 relative overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="text-center lg:text-left animate-fade-in">
-            <div className="inline-flex items-center bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-              <Zap className="h-4 w-4 text-white mr-2" />
-              <span className="text-white text-sm font-medium">Trusted by 50,000+ Households</span>
+            <div className="inline-flex items-center bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6 animate-pulse-glow">
+              <Zap className="h-4 w-4 text-white mr-2 animate-bounce" style={{ animationDuration: '2s' }} />
+              <span className="text-white text-sm font-medium animate-fade-in">Trusted by 50,000+ Households</span>
             </div>
             
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
@@ -46,6 +53,7 @@ const Hero = () => {
                 variant="outline" 
                 size="hero"
                 className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white hover:text-primary"
+                onClick={scrollToFeatures}
               >
                 Learn More
               </Button>

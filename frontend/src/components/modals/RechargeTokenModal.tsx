@@ -26,14 +26,18 @@ const RechargeTokenModal = ({ open, onOpenChange }: RechargeTokenModalProps) => 
   });
   const { toast } = useToast();
 
-  const [meters, setMeters] = useState<{ id: string; name?: string }[]>([]);
+  const [meters, setMeters] = useState<{ id: string; name?: string; meterNumber?: string }[]>([]);
 
   useEffect(() => {
     let isMounted = true;
     metersService.getMeters({ page_size: 200 }).then((res) => {
       const list: MeterType[] = Array.isArray(res) ? res : (res.results || []);
       if (!isMounted) return;
-      setMeters(list.map((m: MeterType) => ({ id: String(m.id), name: (m.nickname || m.name || m.meter_number || String(m.id)) })));
+      setMeters(list.map((m: MeterType) => ({ 
+        id: String(m.id), 
+        name: (m.nickname || m.name), 
+        meterNumber: m.meter_number 
+      })));
     }).catch((err) => { console.debug('failed to load meters for recharge modal', err); });
     return () => { isMounted = false; };
   }, []);
@@ -188,7 +192,8 @@ const RechargeTokenModal = ({ open, onOpenChange }: RechargeTokenModalProps) => 
               <SelectContent>
                 {meters.map((meter) => (
                   <SelectItem key={meter.id} value={meter.id}>
-                    {meter.name} {meter.name && '•'} {meter.id}
+                    {meter.name && <span className="font-medium">{meter.name} • </span>}
+                    <span className="text-muted-foreground">{meter.meterNumber || `ID: ${meter.id}`}</span>
                   </SelectItem>
                 ))}
               </SelectContent>

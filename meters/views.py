@@ -238,6 +238,21 @@ class MeterViewSet(viewsets.ModelViewSet):
                         amount=pool_token.amount or amount_dec,
                         units=pool_token.units if pool_token.units is not None else (amount_dec * _Decimal('4.2')).quantize(_Decimal('0.01')),
                     )
+                    
+                    # Create notification for successful token purchase
+                    if user_obj:
+                        try:
+                            from notifications.models import Notification
+                            units_display = pool_token.units if pool_token.units is not None else (amount_dec * _Decimal('4.2')).quantize(_Decimal('0.01'))
+                            Notification.objects.create(
+                                user=user_obj,
+                                notification_type='purchase',
+                                title='Token Purchase Successful',
+                                message=f'You have successfully purchased {units_display} kWh for ${amount_dec}. Token: {allocated[:4]}...{allocated[-4:]}'
+                            )
+                        except Exception as notif_err:
+                            import logging
+                            logging.exception('Failed to create purchase notification')
                 except Exception:
                     # don't block allocation if audit creation fails; log and continue
                     import logging
