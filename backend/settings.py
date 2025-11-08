@@ -79,8 +79,7 @@ INSTALLED_APPS += [
 ]
 
 MIDDLEWARE = [
-    'backend.middleware.CorsMiddleware',  # Custom CORS middleware first
-    'corsheaders.middleware.CorsMiddleware',  # django-cors-headers middleware
+    'corsheaders.middleware.CorsMiddleware',  # CORS must be first
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -102,7 +101,6 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
-    'EXCEPTION_HANDLER': 'backend.exception_handler.custom_exception_handler',
 }
 
 # JWT Configuration
@@ -116,15 +114,9 @@ SIMPLE_JWT = {
 }
 
 # CORS Configuration
-# TEMPORARILY allow all origins for debugging (CHANGE THIS IN PRODUCTION)
+# Allow all origins for now
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-
-# Production origins (will use after testing)
-# _cors_origins = os.environ.get('CORS_ALLOWED_ORIGINS', 
-#     'http://localhost:5173,http://localhost:3000,http://localhost:8080,https://zetdc-frontend-k15nifp0m-royalcodeplagues-projects.vercel.app'
-# )
-# CORS_ALLOWED_ORIGINS = [origin.strip() for origin in _cors_origins.split(',') if origin.strip()]
 
 CORS_ALLOW_METHODS = [
     'DELETE',
@@ -146,6 +138,9 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
+
+# Important: Allow preflight requests to be cached
+CORS_PREFLIGHT_MAX_AGE = 86400
 
 ROOT_URLCONF = 'backend.urls'
 
