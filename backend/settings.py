@@ -79,7 +79,8 @@ INSTALLED_APPS += [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # Must be at the top
+    'backend.middleware.CorsMiddleware',  # Custom CORS middleware first
+    'corsheaders.middleware.CorsMiddleware',  # django-cors-headers middleware
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -94,10 +95,10 @@ MIDDLEWARE = [
 # REST Framework Configuration
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'backend.permissions.OptionalJWTAuthentication',  # Custom JWT that allows OPTIONS
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'backend.permissions.AllowOptionsAuthentication',  # Allow OPTIONS for CORS preflight
+        'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
