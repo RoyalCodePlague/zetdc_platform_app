@@ -1,6 +1,7 @@
 """
 Custom middleware for handling CORS properly
 """
+from django.http import HttpResponse
 
 
 class CorsMiddleware:
@@ -13,9 +14,11 @@ class CorsMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        # Handle OPTIONS requests immediately
+        # Handle OPTIONS requests immediately with 200 OK
+        # This bypasses authentication and returns immediately
         if request.method == 'OPTIONS':
-            response = self.get_response(request)
+            response = HttpResponse()
+            response.status_code = 200
             return self.add_cors_headers(request, response)
         
         response = self.get_response(request)
