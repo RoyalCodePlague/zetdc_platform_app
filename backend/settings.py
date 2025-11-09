@@ -30,13 +30,15 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
 # CSRF Configuration
+# Get Replit domains from environment (auto-populated by Replit)
 REPLIT_DOMAINS = os.environ.get('REPLIT_DOMAINS', '').split(',')
 CSRF_TRUSTED_ORIGINS = [
     'https://zetdcplatformapp-production.up.railway.app',
     'https://zetdc-frontend.vercel.app',
     'http://localhost:5173',
     'http://localhost:3000',
-] + [f'https://{domain}' for domain in REPLIT_DOMAINS if domain]
+    'http://localhost:5000',
+] + [f'https://{domain}' for domain in REPLIT_DOMAINS if domain.strip()]
 
 # Application definition
 
@@ -112,12 +114,13 @@ SIMPLE_JWT = {
 }
 
 # CORS Configuration
-# Specific allowed origins
+# Specific allowed origins - includes Replit domains from environment
 CORS_ALLOWED_ORIGINS = [
     'https://zetdc-frontend.vercel.app',
     'http://localhost:3000',
     'http://localhost:5173',
-] + [f'https://{domain}' for domain in REPLIT_DOMAINS if domain]
+    'http://localhost:5000',
+] + [f'https://{domain}' for domain in REPLIT_DOMAINS if domain.strip()]
 
 # Allow credentials (cookies, authorization headers, etc.)
 CORS_ALLOW_CREDENTIALS = True
@@ -162,8 +165,8 @@ CSRF_TRUSTED_ORIGINS += [
     'https://zetdcplatformapp-production.up.railway.app',
 ]
 
-# Allow all origins for development (be more restrictive in production)
-CORS_ORIGIN_ALLOW_ALL = True
+# Security: Do not allow all origins - use explicit whitelist for security
+CORS_ORIGIN_ALLOW_ALL = False
 
 ROOT_URLCONF = 'backend.urls'
 
