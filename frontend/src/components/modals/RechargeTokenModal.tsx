@@ -27,19 +27,53 @@ const RechargeTokenModal = ({ open, onOpenChange }: RechargeTokenModalProps) => 
   const { toast } = useToast();
 
   const [meters, setMeters] = useState<{ id: string; name?: string; meterNumber?: string }[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
-    metersService.getMeters({ page_size: 200 }).then((res) => {
-      const list: MeterType[] = Array.isArray(res) ? res : (res.results || []);
-      if (!isMounted) return;
-      setMeters(list.map((m: MeterType) => ({ 
-        id: String(m.id), 
-        name: (m.nickname || m.name), 
-        meterNumber: m.meter_number 
-      })));
-    }).catch((err) => { console.debug('failed to load meters for recharge modal', err); });
-    return () => { isMounted = false; };
+    
+    const fetchMeters = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        console.log('Fetching meters...');
+        
+        const response = await metersService.getMeters({ page_size: 200 });
+        console.log('Meters API response:', response);
+        
+        // Handle both array and paginated responses
+        const list = Array.isArray(response) ? response : (response?.results || []);
+        console.log('Processed meters list:', list);
+        
+        if (!isMounted) return;
+        
+        // Transform the data to match our expected format
+        const transformedMeters = list.map((m: any) => ({
+          id: String(m.id),
+          name: m.nickname || m.name || 'Unnamed Meter',
+          meterNumber: m.meter_number || m.meterNumber || 'N/A'
+        }));
+        
+        console.log('Transformed meters:', transformedMeters);
+        setMeters(transformedMeters);
+      } catch (err) {
+        console.error('Failed to load meters:', err);
+        if (isMounted) {
+          setError('Failed to load meters. Please try again later.');
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchMeters();
+    
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -56,11 +90,11 @@ const RechargeTokenModal = ({ open, onOpenChange }: RechargeTokenModalProps) => 
       } else if (res && (res.status === 'pending' || res.status === 'scheduled' || res.status === 202)) {
         // backend will return pending with an id for ManualRecharge; start polling
         const id = res.id || res.detail || null;
-          if (id) {
+        if (id) {
           setPendingId(Number(id));
           toast({ title: 'Verification scheduled', description: 'We are verifying your token. This may take a few seconds.' });
           // notify UI that a pending recharge exists so it can refresh immediately
-            try { window.dispatchEvent(new CustomEvent('recharge:updated', { detail: { id: Number(id), status: 'pending' } })); } catch (e) { console.debug('ev dispatch failed', e); }
+          try { window.dispatchEvent(new CustomEvent('recharge:updated', { detail: { id: Number(id), status: 'pending' } })); } catch (e) { console.debug('ev dispatch failed', e); }
           // start polling
           pollManualRecharge(Number(id));
         } else {
@@ -109,28 +143,24 @@ const RechargeTokenModal = ({ open, onOpenChange }: RechargeTokenModalProps) => 
     pollingRef.current = window.setInterval(async () => {
       attempts += 1;
       try {
-      const data = await rechargesService.get(String(id));
-      if (!data) return;
-      const status = (data as unknown as Record<string, unknown>).status as string | undefined;
-          if (status && status !== 'pending') {
+        const data = await rechargesService.get(String(id));
+        if (!data) return;
+        const status = (data as unknown as Record<string, unknown>).status as string | undefined;
+        if (status && status !== 'pending') {
           stopPolling();
           if (status === 'success') {
             setSuccess(true);
             toast({ title: 'Token Recharged', description: 'Your electricity has been recharged.' });
             try { window.dispatchEvent(new CustomEvent('recharge:updated', { detail: { id: Number(id), status: 'success' } })); } catch (e) { console.debug('ev dispatch failed', e); }
           } else if (status === 'rejected') {
-            {
-              const d = data as Record<string, unknown> | null;
-              const msg = d && typeof d === 'object' ? (d['message'] as string) || (d['detail'] as string) || 'Token rejected' : 'Token rejected';
-              toast({ title: 'Recharge Rejected', description: msg, variant: 'destructive' });
-            }
+            const d = data as Record<string, unknown> | null;
+            const msg = d && typeof d === 'object' ? (d['message'] as string) || (d['detail'] as string) || 'Token rejected' : 'Token rejected';
+            toast({ title: 'Recharge Rejected', description: msg, variant: 'destructive' });
             try { window.dispatchEvent(new CustomEvent('recharge:updated', { detail: { id: Number(id), status: 'rejected' } })); } catch (e) { console.debug('ev dispatch failed', e); }
           } else {
-            {
-              const d = data as Record<string, unknown> | null;
-              const msg = d && typeof d === 'object' ? (d['message'] as string) || (d['detail'] as string) || 'Failed to apply token' : 'Failed to apply token';
-              toast({ title: 'Recharge Failed', description: msg, variant: 'destructive' });
-            }
+            const d = data as Record<string, unknown> | null;
+            const msg = d && typeof d === 'object' ? (d['message'] as string) || (d['detail'] as string) || 'Failed to apply token' : 'Failed to apply token';
+            toast({ title: 'Recharge Failed', description: msg, variant: 'destructive' });
             try { window.dispatchEvent(new CustomEvent('recharge:updated', { detail: { id: Number(id), status: 'failed' } })); } catch (e) { console.debug('ev dispatch failed', e); }
           }
         } else if (attempts >= 10) {
@@ -181,27 +211,38 @@ const RechargeTokenModal = ({ open, onOpenChange }: RechargeTokenModalProps) => 
             <span>Recharge with Token</span>
           </DialogTitle>
         </DialogHeader>
-        
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="meterNumber">Select Meter</Label>
-            <Select value={formData.meterNumber} onValueChange={(value) => setFormData({ ...formData, meterNumber: value })}>
+            <Label htmlFor="meter">Select Meter</Label>
+            <Select 
+              value={formData.meterNumber}
+              onValueChange={(value) => setFormData({ ...formData, meterNumber: value })}
+              disabled={isLoading}
+            >
               <SelectTrigger>
-                <SelectValue placeholder="Choose meter to recharge" />
+                <SelectValue placeholder={isLoading ? "Loading meters..." : "Select a meter"} />
               </SelectTrigger>
               <SelectContent>
-                {meters.map((meter) => (
-                  <SelectItem key={meter.id} value={meter.id}>
-                    {meter.name && <span className="font-medium">{meter.name} • </span>}
-                    <span className="text-muted-foreground">{meter.meterNumber || `ID: ${meter.id}`}</span>
-                  </SelectItem>
-                ))}
+                {error ? (
+                  <div className="p-2 text-sm text-red-500">{error}</div>
+                ) : isLoading ? (
+                  <div className="p-2 text-sm text-muted-foreground">Loading meters...</div>
+                ) : meters.length === 0 ? (
+                  <div className="p-2 text-sm text-muted-foreground">No meters found</div>
+                ) : (
+                  meters.map((meter) => (
+                    <SelectItem key={meter.id} value={meter.id}>
+                      {meter.name && <span className="font-medium">{meter.name} • </span>}
+                      <span className="text-muted-foreground">{meter.meterNumber}</span>
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           </div>
-
+          
           <div className="space-y-2">
-            <Label htmlFor="token">20-Digit Token</Label>
+            <Label htmlFor="token">Token</Label>
             <Input
               id="token"
               placeholder="Enter your 20-digit electricity token"
@@ -216,12 +257,18 @@ const RechargeTokenModal = ({ open, onOpenChange }: RechargeTokenModalProps) => 
           </div>
 
           <div className="flex justify-end space-x-2 pt-4">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={loading}>
               Cancel
             </Button>
             <Button type="submit" disabled={loading || !formData.meterNumber || formData.token.length !== 20}>
-              {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              Recharge Now
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                'Recharge Now'
+              )}
             </Button>
           </div>
         </form>
