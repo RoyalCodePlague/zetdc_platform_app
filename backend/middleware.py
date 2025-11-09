@@ -3,15 +3,24 @@ Custom middleware for handling CORS properly
 """
 from django.http import HttpResponse, JsonResponse
 from django.conf import settings
+import re
 
 class CorsMiddleware:
     """
     Middleware to ensure CORS headers are sent on all responses,
     including error responses from authentication failures.
+    Supports wildcard patterns for Vercel preview deployments.
     """
     
     def __init__(self, get_response):
         self.get_response = get_response
+        
+        # Compile regex patterns for allowed origins
+        self.allowed_origin_patterns = [
+            re.compile(r'^https://zetdc-frontend\.vercel\.app$'),
+            re.compile(r'^https://zetdc-frontend-.*\.vercel\.app$'),  # Vercel preview deployments
+            re.compile(r'^http://localhost:\d+$'),  # Local development
+        ]
 
     def __call__(self, request):
         # Handle OPTIONS requests immediately with 200 OK
@@ -22,19 +31,24 @@ class CorsMiddleware:
         
         return self.add_cors_headers(request, response)
 
+    def is_origin_allowed(self, origin):
+        """Check if origin matches any allowed pattern"""
+        if not origin:
+            return False
+        
+        for pattern in self.allowed_origin_patterns:
+            if pattern.match(origin):
+                return True
+        
+        return False
+
     def add_cors_headers(self, request, response):
         """Add CORS headers to response"""
         # Get the origin from the request
         origin = request.META.get('HTTP_ORIGIN', '')
         
-        # Check if the origin is in the allowed origins
-        allowed_origins = [
-            'https://zetdc-frontend.vercel.app',
-            'http://localhost:3000',
-            'http://localhost:5173',
-        ]
-        
-        if origin in allowed_origins:
+        # Check if the origin is allowed
+        if self.is_origin_allowed(origin):
             response['Access-Control-Allow-Origin'] = origin
             response['Access-Control-Allow-Credentials'] = 'true'
         

@@ -29,18 +29,6 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
-# CSRF Configuration
-CSRF_TRUSTED_ORIGINS = [
-    'https://zetdcplatformapp-production.up.railway.app',
-    'https://zetdc-frontend.vercel.app',  # Production Vercel URL
-    'https://zetdc-frontend-k15nifp0m-royalcodeplagues-projects.vercel.app',
-    'https://zetdc-frontend-itnkm4jh7-royalcodeplagues-projects.vercel.app',
-    'https://zetdc-frontend-89c6avwko-royalcodeplagues-projects.vercel.app',
-    'https://zetdc-frontend-biy8tcqxa-royalcodeplagues-projects.vercel.app',
-    'http://localhost:5173',
-    'http://localhost:3000',
-]
-
 # Application definition
 
 # Make optional third-party admin theme 'jazzmin' non-fatal if not installed in the dev env
@@ -115,7 +103,16 @@ SIMPLE_JWT = {
 }
 
 # CORS Configuration
-# Specific allowed origins
+# Use regex patterns to allow Vercel preview deployments
+import re
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://zetdc-frontend\.vercel\.app$",  # Production
+    r"^https://zetdc-frontend-.*\.vercel\.app$",  # Vercel preview deployments
+    r"^http://localhost:\d+$",  # Local development
+]
+
+# Also keep specific origins for clarity
 CORS_ALLOWED_ORIGINS = [
     'https://zetdc-frontend.vercel.app',
     'http://localhost:3000',
@@ -158,16 +155,14 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SECURE = True
 
-# Trusted origins for CSRF
+# Trusted origins for CSRF - use wildcard pattern for Vercel
 CSRF_TRUSTED_ORIGINS = [
     'https://zetdc-frontend.vercel.app',
+    'https://*.vercel.app',  # Allow all Vercel preview deployments
     'http://localhost:3000',
     'http://localhost:5173',
     'https://zetdcplatformapp-production.up.railway.app',
 ]
-
-# Allow all origins for development (be more restrictive in production)
-CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'backend.urls'
 
