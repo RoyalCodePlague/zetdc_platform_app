@@ -1,5 +1,5 @@
 """
-Django settings for backend project.
+Django settings for backend project (ZETDC Platform)
 """
 
 from pathlib import Path
@@ -9,43 +9,39 @@ from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-2%jn*wz)-m67aa_31u0e@g36tvxfvs^1ii4+-^am=@3sya!+65')
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+# ==============================
+# ✅ Security Settings
+# ==============================
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-placeholder-key')
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,zetdcplatformapp-production.up.railway.app').split(',')
 
 # ==============================
 # ✅ CSRF Trusted Origins
 # ==============================
-REPLIT_DOMAINS = os.environ.get('REPLIT_DOMAINS', '').split(',')
 CSRF_TRUSTED_ORIGINS = [
-    'https://zetdcplatformapp-production.up.railway.app',
     'https://zetdc-frontend.vercel.app',
+    'https://zetdcplatformapp-production.up.railway.app',
     'http://localhost:5173',
     'http://localhost:3000',
-    'http://localhost:5000',
-] + [f'https://{domain}' for domain in REPLIT_DOMAINS if domain.strip()]
+]
 
 # ==============================
-# Installed Apps
+# ✅ Installed Apps
 # ==============================
-try:
-    import importlib
-    importlib.import_module('jazzmin')
-    _HAS_JAZZMIN = True
-except Exception:
-    _HAS_JAZZMIN = False
+INSTALLED_APPS = [
+    # UI (Optional)
+    'jazzmin',
 
-INSTALLED_APPS = []
-if _HAS_JAZZMIN:
-    INSTALLED_APPS.append('jazzmin')
-
-INSTALLED_APPS += [
+    # Django default
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Third-party
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
@@ -59,14 +55,11 @@ INSTALLED_APPS += [
     'support',
 ]
 
-WSGI_APPLICATION = 'backend.wsgi.application'
-
-
 # ==============================
-# ✅ Middleware (fixed order)
+# ✅ Middleware (CORS First!)
 # ==============================
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # must be first
+    'corsheaders.middleware.CorsMiddleware',  # Must be at the top
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -76,10 +69,77 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-# Removed 'backend.middleware.CorsMiddleware' → it was conflicting
+
+ROOT_URLCONF = 'backend.urls'
+WSGI_APPLICATION = 'backend.wsgi.application'
 
 # ==============================
-# REST Framework & JWT
+# ✅ Templates
+# ==============================
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'templates'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+# ==============================
+# ✅ Database
+# ==============================
+if os.environ.get('DATABASE_URL'):
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ['DATABASE_URL'],
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
+# ==============================
+# ✅ CORS & CSRF Config
+# ==============================
+CORS_ALLOWED_ORIGINS = [
+    'https://zetdc-frontend.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:3000',
+]
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://zetdc-frontend.*\.vercel\.app$",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ['*']
+CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
+CORS_PREFLIGHT_MAX_AGE = 86400
+CORS_ORIGIN_ALLOW_ALL = False
+
+# ==============================
+# ✅ Secure Cookies for Cross-site
+# ==============================
+SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = True
+
+# ==============================
+# ✅ REST Framework & JWT
 # ==============================
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -100,99 +160,37 @@ SIMPLE_JWT = {
 }
 
 # ==============================
-# ✅ CORS Configuration (fixed)
+# ✅ Static & Media Files
 # ==============================
-CORS_ALLOWED_ORIGINS = [
-    'https://zetdc-frontend.vercel.app',
-    'http://localhost:3000',
-    'http://localhost:5173',
-    'http://localhost:5000',
-] + [f'https://{domain}' for domain in REPLIT_DOMAINS if domain.strip()]
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Allow wildcard for all Vercel preview subdomains (optional)
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^https://zetdc-frontend.*\.vercel\.app$",
-]
-
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
-CORS_ALLOW_HEADERS = ['*']
-CORS_PREFLIGHT_MAX_AGE = 86400
-CORS_ORIGIN_ALLOW_ALL = False  # explicit allowed list only
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # ==============================
-# ✅ Secure Cookies for cross-site
-# ==============================
-SESSION_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SAMESITE = 'None'
-CSRF_COOKIE_SECURE = True
-
-# ==============================
-# Database
-# ==============================
-if os.environ.get('DATABASE_URL'):
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=os.environ.get('DATABASE_URL'),
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-
-
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # you can change this path if needed
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
-]
-
-
-# ==============================
-# Miscellaneous
+# ✅ Miscellaneous
 # ==============================
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
-
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ==============================
+# ✅ Custom User
+# ==============================
 AUTH_USER_MODEL = 'usersAuth.User'
 
 # ==============================
-# Jazzmin
+# ✅ Jazzmin Settings (Optional)
 # ==============================
 JAZZMIN_SETTINGS = {
     "site_title": "ZETDC Platform Admin",
     "site_header": "ZETDC Admin",
     "welcome_sign": "Welcome to ZETDC Management",
     "copyright": "© 2025 ZETDC",
-    "order_with_respect_to": ["usersAuth", "meters", "transactions", "notifications", "support"],
-    "show_ui_builder": True,
 }
 
 JAZZMIN_UI_TWEAKS = {
