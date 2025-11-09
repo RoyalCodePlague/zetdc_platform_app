@@ -27,14 +27,20 @@ class CorsMiddleware:
         # Get the origin from the request
         origin = request.META.get('HTTP_ORIGIN', '')
         
-        # Check if the origin is in the allowed origins
+        # Check if the origin is in the allowed origins or matches Vercel preview pattern
         allowed_origins = [
             'https://zetdc-frontend.vercel.app',
             'http://localhost:3000',
             'http://localhost:5173',
         ]
         
-        if origin in allowed_origins:
+        # Allow Vercel preview deployments (pattern: https://*-royalcodeplagues-projects.vercel.app)
+        is_vercel_preview = (
+            origin.startswith('https://') and 
+            origin.endswith('-royalcodeplagues-projects.vercel.app')
+        )
+        
+        if origin in allowed_origins or is_vercel_preview:
             response['Access-Control-Allow-Origin'] = origin
             response['Access-Control-Allow-Credentials'] = 'true'
         
