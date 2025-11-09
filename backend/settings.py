@@ -115,7 +115,44 @@ SIMPLE_JWT = {
 }
 
 # CORS Configuration
-# Specific allowed origins
+import re
+
+# Define a custom origin validator for Vercel URLs
+def cors_allow_vercel_origins(origin):
+    """Allow all Vercel preview and production URLs"""
+    if not origin:
+        return False
+    
+    allowed_origins = [
+        'https://zetdc-frontend.vercel.app',
+        'http://localhost:3000',
+        'http://localhost:5173',
+    ]
+    
+    if origin in allowed_origins:
+        return True
+    
+    # Allow all Vercel preview URLs
+    vercel_patterns = [
+        r'^https://zetdc-frontend-[a-z0-9]+-royalcodeplagues-projects\.vercel\.app$',
+        r'^https://zetdc-frontend-.*\.vercel\.app$',
+    ]
+    
+    for pattern in vercel_patterns:
+        if re.match(pattern, origin):
+            return True
+    
+    return False
+
+# Use origin regex whitelist for Vercel URLs
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r'^https://zetdc-frontend\.vercel\.app$',
+    r'^https://zetdc-frontend-[a-z0-9]+-royalcodeplagues-projects\.vercel\.app$',
+    r'^https://zetdc-frontend-.*\.vercel\.app$',
+    r'^http://localhost:(3000|5173)$',
+]
+
+# Specific allowed origins (fallback)
 CORS_ALLOWED_ORIGINS = [
     'https://zetdc-frontend.vercel.app',
     'http://localhost:3000',
@@ -157,17 +194,6 @@ SESSION_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SECURE = True
-
-# Trusted origins for CSRF
-CSRF_TRUSTED_ORIGINS = [
-    'https://zetdc-frontend.vercel.app',
-    'http://localhost:3000',
-    'http://localhost:5173',
-    'https://zetdcplatformapp-production.up.railway.app',
-]
-
-# Allow all origins for development (be more restrictive in production)
-CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'backend.urls'
 
