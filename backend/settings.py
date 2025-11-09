@@ -29,14 +29,12 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
-# CSRF Configuration
+# CSRF Configuration - Supporting all Vercel preview deployments
+# Note: Django doesn't support regex in CSRF_TRUSTED_ORIGINS, so we list common patterns
 CSRF_TRUSTED_ORIGINS = [
     'https://zetdcplatformapp-production.up.railway.app',
-    'https://zetdc-frontend.vercel.app',  # Production Vercel URL
-    'https://zetdc-frontend-k15nifp0m-royalcodeplagues-projects.vercel.app',
-    'https://zetdc-frontend-itnkm4jh7-royalcodeplagues-projects.vercel.app',
-    'https://zetdc-frontend-89c6avwko-royalcodeplagues-projects.vercel.app',
-    'https://zetdc-frontend-biy8tcqxa-royalcodeplagues-projects.vercel.app',
+    'https://zetdc-frontend.vercel.app',
+    'https://*.vercel.app',  # Wildcard for Vercel preview URLs
     'http://localhost:5173',
     'http://localhost:3000',
 ]
@@ -115,9 +113,15 @@ SIMPLE_JWT = {
 }
 
 # CORS Configuration
+# Allow all origins from Vercel (including preview deployments)
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$",
+]
+
 # Specific allowed origins
 CORS_ALLOWED_ORIGINS = [
     'https://zetdc-frontend.vercel.app',
+    'https://zetdcplatformapp-production.up.railway.app',
     'http://localhost:3000',
     'http://localhost:5173',
 ]
@@ -158,16 +162,11 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SECURE = True
 
-# Trusted origins for CSRF
-CSRF_TRUSTED_ORIGINS = [
-    'https://zetdc-frontend.vercel.app',
-    'http://localhost:3000',
-    'http://localhost:5173',
-    'https://zetdcplatformapp-production.up.railway.app',
-]
 
-# Allow all origins for development (be more restrictive in production)
-CORS_ORIGIN_ALLOW_ALL = True
+
+# In production, we use regex patterns to allow Vercel preview URLs
+# In development, allow all origins
+CORS_ORIGIN_ALLOW_ALL = DEBUG
 
 ROOT_URLCONF = 'backend.urls'
 
