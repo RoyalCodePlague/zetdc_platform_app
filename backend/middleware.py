@@ -1,8 +1,8 @@
 """
 Custom middleware for handling CORS properly
 """
-from django.http import HttpResponse
-
+from django.http import HttpResponse, JsonResponse
+from django.conf import settings
 
 class CorsMiddleware:
     """
@@ -15,24 +15,37 @@ class CorsMiddleware:
 
     def __call__(self, request):
         # Handle OPTIONS requests immediately with 200 OK
-        # This bypasses authentication and returns immediately
         if request.method == 'OPTIONS':
-            response = HttpResponse()
-            response.status_code = 200
-            return self.add_cors_headers(request, response)
+            response = JsonResponse({}, status=200)
+        else:
+            response = self.get_response(request)
         
-        response = self.get_response(request)
         return self.add_cors_headers(request, response)
 
     def add_cors_headers(self, request, response):
         """Add CORS headers to response"""
-        origin = request.META.get('HTTP_ORIGIN', '*')
+        # Get the origin from the request
+        origin = request.META.get('HTTP_ORIGIN', '')
         
-        # Allow all origins (as configured in settings.CORS_ALLOW_ALL_ORIGINS)
-        response['Access-Control-Allow-Origin'] = origin
-        response['Access-Control-Allow-Credentials'] = 'true'
+        # Check if the origin is in the allowed origins
+        allowed_origins = [
+            'https://zetdc-frontend.vercel.app',
+            'http://localhost:3000',
+            'http://localhost:5173',
+        ]
+        
+        if origin in allowed_origins:
+            response['Access-Control-Allow-Origin'] = origin
+            response['Access-Control-Allow-Credentials'] = 'true'
+        
+        # Set CORS headers
         response['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
-        response['Access-Control-Allow-Headers'] = 'accept, accept-encoding, authorization, content-type, dnt, origin, user-agent, x-csrftoken, x-requested-with'
+        response['Access-Control-Allow-Headers'] = 'accept, accept-encoding, authorization, content-type, dnt, origin, user-agent, x-csrftoken, x-requested-with, x-xsrf-token'
         response['Access-Control-Max-Age'] = '86400'
+        
+        # Handle preflight requests
+        if request.method == 'OPTIONS':
+            response['Access-Control-Allow-Headers'] = 'accept, accept-encoding, authorization, content-type, dnt, origin, user-agent, x-csrftoken, x-requested-with, x-xsrf-token'
+            response['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
         
         return response

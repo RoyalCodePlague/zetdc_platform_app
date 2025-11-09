@@ -88,6 +88,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'backend.middleware.CorsMiddleware',  # Custom CORS middleware
 ]
 
 
@@ -157,8 +158,16 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SECURE = True
 
-# Add support for credentials in CORS
-CORS_ALLOW_CREDENTIALS = True
+# Trusted origins for CSRF
+CSRF_TRUSTED_ORIGINS = [
+    'https://zetdc-frontend.vercel.app',
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'https://zetdcplatformapp-production.up.railway.app',
+]
+
+# Allow all origins for development (be more restrictive in production)
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'backend.urls'
 
