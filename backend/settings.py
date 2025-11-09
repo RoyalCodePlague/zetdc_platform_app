@@ -59,6 +59,9 @@ INSTALLED_APPS += [
     'support',
 ]
 
+WSGI_APPLICATION = 'backend.wsgi.application'
+
+
 # ==============================
 # ✅ Middleware (fixed order)
 # ==============================
