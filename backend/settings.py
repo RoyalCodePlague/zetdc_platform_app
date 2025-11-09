@@ -30,16 +30,13 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
 # CSRF Configuration
+REPLIT_DOMAINS = os.environ.get('REPLIT_DOMAINS', '').split(',')
 CSRF_TRUSTED_ORIGINS = [
     'https://zetdcplatformapp-production.up.railway.app',
-    'https://zetdc-frontend.vercel.app',  # Production Vercel URL
-    'https://zetdc-frontend-k15nifp0m-royalcodeplagues-projects.vercel.app',
-    'https://zetdc-frontend-itnkm4jh7-royalcodeplagues-projects.vercel.app',
-    'https://zetdc-frontend-89c6avwko-royalcodeplagues-projects.vercel.app',
-    'https://zetdc-frontend-biy8tcqxa-royalcodeplagues-projects.vercel.app',
+    'https://zetdc-frontend.vercel.app',
     'http://localhost:5173',
     'http://localhost:3000',
-]
+] + [f'https://{domain}' for domain in REPLIT_DOMAINS if domain]
 
 # Application definition
 
@@ -120,7 +117,7 @@ CORS_ALLOWED_ORIGINS = [
     'https://zetdc-frontend.vercel.app',
     'http://localhost:3000',
     'http://localhost:5173',
-]
+] + [f'https://{domain}' for domain in REPLIT_DOMAINS if domain]
 
 # Allow credentials (cookies, authorization headers, etc.)
 CORS_ALLOW_CREDENTIALS = True
@@ -158,11 +155,10 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SECURE = True
 
-# Trusted origins for CSRF
-CSRF_TRUSTED_ORIGINS = [
-    'https://zetdc-frontend.vercel.app',
-    'http://localhost:3000',
-    'http://localhost:5173',
+# Additional CSRF trusted origins (merged with earlier declaration)
+if 'CSRF_TRUSTED_ORIGINS' not in locals():
+    CSRF_TRUSTED_ORIGINS = []
+CSRF_TRUSTED_ORIGINS += [
     'https://zetdcplatformapp-production.up.railway.app',
 ]
 
