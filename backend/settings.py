@@ -114,10 +114,17 @@ SIMPLE_JWT = {
 }
 
 # CORS Configuration
-# Allow all origins for now
-CORS_ALLOW_ALL_ORIGINS = True
+# Specific allowed origins
+CORS_ALLOWED_ORIGINS = [
+    'https://zetdc-frontend.vercel.app',
+    'http://localhost:3000',
+    'http://localhost:5173',
+]
+
+# Allow credentials (cookies, authorization headers, etc.)
 CORS_ALLOW_CREDENTIALS = True
 
+# Allowed methods
 CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',
@@ -127,6 +134,7 @@ CORS_ALLOW_METHODS = [
     'PUT',
 ]
 
+# Allowed headers
 CORS_ALLOW_HEADERS = [
     'accept',
     'accept-encoding',
@@ -137,10 +145,20 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
+    'x-xsrf-token',
 ]
 
-# Important: Allow preflight requests to be cached
+# Allow preflight requests to be cached for 1 day
 CORS_PREFLIGHT_MAX_AGE = 86400
+
+# Allow cookies to be included in cross-site HTTP requests
+SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = True
+
+# Add support for credentials in CORS
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'backend.urls'
 
