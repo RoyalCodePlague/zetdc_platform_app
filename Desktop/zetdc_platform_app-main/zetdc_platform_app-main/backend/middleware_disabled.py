@@ -34,6 +34,7 @@ class CorsMiddleware:
         # Check if the origin is in the allowed origins
         allowed_origins = [
             'https://zetdc-frontend.vercel.app',
+            'https://zetdc-frontend-k15nifp0m-royalcodeplagues-projects.vercel.app',
             'http://localhost:3000',
             'http://localhost:5173',
             'https://zetdcplatformapp-production.up.railway.app',

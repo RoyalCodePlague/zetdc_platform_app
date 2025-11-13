@@ -117,6 +117,7 @@ else:
 # ==============================
 CORS_ALLOWED_ORIGINS = [
     'https://zetdc-frontend.vercel.app',
+    'https://zetdc-frontend-k15nifp0m-royalcodeplagues-projects.vercel.app',
     'http://localhost:5173',
     'http://localhost:3000',
     'https://zetdcplatformapp-production.up.railway.app',
@@ -124,6 +125,7 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://zetdc-frontend.*\.vercel\.app$",
+    r"^https://.*\.vercel\.app$",
     r"^https://zetdcplatformapp-production\.up\.railway\.app$",
 ]
 
