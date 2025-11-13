@@ -143,9 +143,10 @@ CORS_EXPOSE_HEADERS = [
     'authorization',
     'content-type',
 ]
-CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
+CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD']
 CORS_PREFLIGHT_MAX_AGE = 86400
 CORS_ORIGIN_ALLOW_ALL = False
+CORS_ALLOW_ALL_ORIGINS = False
 
 # ==============================
 # ✅ Secure Cookies for Cross-site

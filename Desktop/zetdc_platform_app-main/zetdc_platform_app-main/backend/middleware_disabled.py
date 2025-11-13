@@ -16,9 +16,13 @@ class CorsMiddleware:
     def __call__(self, request):
         # Handle OPTIONS requests immediately with 200 OK
         if request.method == 'OPTIONS':
-            response = JsonResponse({}, status=200)
+            response = HttpResponse(status=200)
         else:
-            response = self.get_response(request)
+            try:
+                response = self.get_response(request)
+            except Exception as e:
+                # Catch any unhandled exceptions and return a safe response with CORS headers
+                response = JsonResponse({'error': 'Internal Server Error'}, status=500)
         
         return self.add_cors_headers(request, response)
 
@@ -32,20 +36,18 @@ class CorsMiddleware:
             'https://zetdc-frontend.vercel.app',
             'http://localhost:3000',
             'http://localhost:5173',
+            'https://zetdcplatformapp-production.up.railway.app',
         ]
         
+        # Always set CORS headers if origin matches
         if origin in allowed_origins:
             response['Access-Control-Allow-Origin'] = origin
             response['Access-Control-Allow-Credentials'] = 'true'
         
-        # Set CORS headers
-        response['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
+        # Set common CORS headers on all responses
+        response['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD'
         response['Access-Control-Allow-Headers'] = 'accept, accept-encoding, authorization, content-type, dnt, origin, user-agent, x-csrftoken, x-requested-with, x-xsrf-token'
+        response['Access-Control-Expose-Headers'] = 'authorization, content-type'
         response['Access-Control-Max-Age'] = '86400'
-        
-        # Handle preflight requests
-        if request.method == 'OPTIONS':
-            response['Access-Control-Allow-Headers'] = 'accept, accept-encoding, authorization, content-type, dnt, origin, user-agent, x-csrftoken, x-requested-with, x-xsrf-token'
-            response['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS'
         
         return response
