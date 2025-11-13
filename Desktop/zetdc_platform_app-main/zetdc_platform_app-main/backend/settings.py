@@ -123,9 +123,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^https://zetdc-frontend.*\.vercel\.app$",
-    r"^https://.*\.vercel\.app$",
-    r"^https://zetdcplatformapp-production\.up\.railway\.app$",
+    r"^https://.*\.vercel\.app$",  # Match ALL vercel.app domains
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -139,13 +137,14 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
+    'x-xsrf-token',
 ]
 CORS_EXPOSE_HEADERS = [
     'authorization',
     'content-type',
 ]
 CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD']
-CORS_PREFLIGHT_MAX_AGE = 86400
+CORS_PREFLIGHT_MAX_AGE = 3600
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOW_ALL_ORIGINS = False
 
