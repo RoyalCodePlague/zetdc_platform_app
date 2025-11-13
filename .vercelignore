@@ -1,0 +1,16 @@
+backend/
+meters/
+notifications/
+support/
+transactions/
+usersAuth/
+*.py
+*.md
+manage.py
+requirements.txt
+railway.json
+render.yaml
+test_*.py
+check_*.py
+*.sqlite3
+Tokens.json
