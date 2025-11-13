@@ -60,6 +60,7 @@ INSTALLED_APPS = [
 # ==============================
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # Must be at the top
+    'backend.middleware_disabled.CorsMiddleware',  # Fallback to ensure headers on error responses
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
