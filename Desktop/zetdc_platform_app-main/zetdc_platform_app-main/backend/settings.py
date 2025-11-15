@@ -59,6 +59,7 @@ INSTALLED_APPS = [
 # ✅ Middleware (CORS First!)
 # ==============================
 MIDDLEWARE = [
+    'backend.middleware_cors_fix.EnsureCorsHeadersMiddleware',
     'corsheaders.middleware.CorsMiddleware',  # Must be at the top
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
