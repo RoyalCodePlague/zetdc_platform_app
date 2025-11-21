@@ -22,6 +22,7 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,zetdcplatfo
 CSRF_TRUSTED_ORIGINS = [
     'https://zetdc-frontend.vercel.app',
     'https://zetdcplatformapp-production.up.railway.app',
+    'https://zetdc-frontend.onrender.com',
     'http://localhost:5173',
     'http://localhost:3000',
 ]
@@ -121,10 +122,12 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'http://localhost:3000',
     'https://zetdcplatformapp-production.up.railway.app',
+    'https://zetdc-frontend.onrender.com',  # Render frontend
 ]
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://.*\.vercel\.app$",  # Match ALL vercel.app domains
+    r"^https://.*\.onrender\.com$",  # Match all Render domains
 ]
 
 CORS_ALLOW_CREDENTIALS = True
